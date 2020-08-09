@@ -14,3 +14,5 @@ Run manually:
 * source venv/bin/activate
 * pip3 install -r requirements.txt
 * python3 run.py 
+
+@ You can then visit localhost:5000 to verify that it's running on your machine. Or, alternatively:
