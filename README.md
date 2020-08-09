@@ -8,7 +8,7 @@ Please follow the instructions below.
 
 Run manually:
 
-git clone REPO
+* git clone REPO
 cd REPO
 python3 -m venv venv
 source venv/bin/activate
