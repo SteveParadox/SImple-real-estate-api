@@ -6,8 +6,6 @@ A simple API of real estate management business .
 
 Please follow the instructions below.
 
-First create a local .env.local configuration file and update values as needed. A sample file is provided at .env.local.sample.
-
 Run manually:
 
 git clone REPO
