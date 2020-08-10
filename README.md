@@ -28,3 +28,5 @@ To create a development database for the api:
 * from base import db, create_app
 * db.create_all(app=create_app)
 ```
+## Routes
+@api.route('/reg/admin', methods=['POST']): ```This registers an admin who has priority access over the database```
