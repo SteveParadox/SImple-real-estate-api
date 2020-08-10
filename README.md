@@ -2,6 +2,16 @@
 
 A simple API of real estate management business .
 
+## Usage
+To create a development database for the api:
+```
+* cd REPO
+* open terminal
+* run python3 to enter console
+* from base import db, create_app
+* db.create_all(app=create_app)
+```
+
 # Getting started
 
 Please follow the instructions below.
@@ -19,14 +29,4 @@ Run manually:
 
 Built to use with a frontend framework for data collection and operation.
 
-## Usage
-To create a development database for the api:
-```
-* cd REPO
-* open terminal
-* run python3 to enter console
-* from base import db, create_app
-* db.create_all(app=create_app)
-```
-## Routes
-@api.route('/reg/admin', methods=['POST']): ```This registers an admin who has priority access over the database```
+
