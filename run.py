@@ -11,4 +11,4 @@ else:
     app.debug = False
 
 if __name__ == '__main__':
-    app.run(host="127.1.1.4")
+    app.run()
