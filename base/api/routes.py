@@ -245,7 +245,7 @@ def sale(apartment_id):
         return 'problem with making sale, check data to confirm validity'
 
 
-@api.route('/sack/agent_name', methods=['POST'])
+@api.route('/sack/<string:agent_name>', methods=['POST'])
 @login_required
 @admin_required
 def sack(agent_name):
