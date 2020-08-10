@@ -31,8 +31,14 @@ Built to use with a frontend framework for data collection and operation.
 
 ## Links/routes
 
-* /reg/admin: ``` registers the admin who has administrative privilidge over the database ```
+* /reg/admin [post]: ``` registers the admin who has administrative privilidge over the database ```
 * /login/admin: ``` logging in as admin (for postman)```
 * /admin/login: ``` logging in as admin```
+* /logout/admin: ```logout as admin```
+* /admin: ```list of all admins```
+* /agent [post]: ```registering an agent ```
+* /agent: ```list of all agentss```
+* /apartment [post]: ```registering an apartment```
+* /apartment: ```list of all apartments```
 
 
