@@ -1,5 +1,5 @@
 from functools import wraps
-
+import uuid
 from flask import *
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -30,16 +30,23 @@ def admin():
             first_name = data['first_name']
             last_name = data['last_name']
             email = data['email']
-            password = generate_password_hash(data['password'])
+            country = data['country']
+            auth_key = str(uuid.uuid4())
+            password = generate_password_hash(data['password'], method='sha256')
             admin = Admin()
             admin.first_name = first_name
             admin.last_name = last_name
             admin.email = email
+            admin.country = country
+            admin.auth_key = auth_key
             admin.password = password
             db.session.add(admin)
             db.session.commit()
-            return jsonify({"message": "admin registered"})
-        return {'message': "already registered as admin"}
+            return jsonify({"message": "admin registered",
+                            'auth_key': admin.auth_key})
+        # if already registered as an admin
+        return {'message': "already registered as admin",
+                'auth_key': check.auth_key}
     except:
         # if there is any problem with the data
         return jsonify({'message': "Could not register admin"})
@@ -49,8 +56,9 @@ def admin():
 def login_admin():
     auth = request.authorization
     if not auth or not auth.username or not auth.password:
-        return make_response("Could not verify, Login to gain access", 401, {'WWW-Authenticate': 'Basic realm="Login required"'})
-    admin = Admin.query.filter_by(first_name=auth.username).first()
+        return make_response("Could not verify, Login to gain access", 401,
+                             {'WWW-Authenticate': 'Basic realm="Login required"'})
+    admin = Admin.query.filter_by(auth_key=auth.username).first()
     if not admin:
         return make_response("Could not verify", 401, {'WWW-Authenticate': 'Basic realm="Login required"'})
 
@@ -60,6 +68,18 @@ def login_admin():
         login_user(admin)
         return jsonify({"message": "logged in"})
     return make_response("Could not verify", 401, {'WWW-Authenticate': 'Basic realm="Login required"'})
+
+
+@api.route('/admin/login', methods=['GET'])
+def admin_login():
+    data = request.get_json()
+    admin = Admin.query.filter_by(auth_key=data['auth_key']).first()
+    if admin and check_password_hash(admin.password, data['password']):
+        admin.logged_in = True
+        db.session.commit()
+        login_user(admin)
+        return jsonify({"message": "logged in"})
+    return jsonify('could not log in'), 401
 
 
 @api.route('/logout/admin')
@@ -88,8 +108,13 @@ def add_agent():
     # registering an agent to the database
     data = request.get_json()
     try:
-        agent = Agent(first_name=data['first_name'], last_name=data['last_name'], gender=data['gender'],
-                      dob=data['dob'], date_employed=data['date_employed'], ssn=data['ssn'])
+        agent = Agent(first_name=data['first_name'],
+                      last_name=data['last_name'],
+                      gender=data['gender'],
+                      dob=data['dob'],
+                      country=data['country'],
+                      date_employed=data['date_employed'],
+                      ssn=data['ssn'])
 
         db.session.add(agent)
         db.session.commit()
@@ -118,8 +143,10 @@ def add_apartment():
     # registering an apartment to the database
     data = request.get_json()
     try:
-        apartment = Apartment(location=data['location'], apartment_name=data['apartment_name'],
-                              apartment_no=data['apartment_no'], sold=data['sold'])
+        apartment = Apartment(location=data['location'],
+                              apartment_name=data['apartment_name'],
+                              apartment_no=data['apartment_no'],
+                              sold=data['sold'])
         db.session.add(apartment)
         db.session.commit()
         return jsonify({'message': "Apartment Registered"})
@@ -146,8 +173,13 @@ def add_client():
     # registering a client to the database
     data = request.get_json()
     try:
-        client = Client(first_name=data['first_name'], last_name=data['last_name'], gender=data['gender'],
-                        dob=data['dob'], phone_no=data['phone_no'], ssn=data['ssn'],
+        client = Client(first_name=data['first_name'],
+                        last_name=data['last_name'],
+                        gender=data['gender'],
+                        dob=data['dob'],
+                        phone_no=data['phone_no'],
+                        ssn=data['ssn'],
+                        country=data['country'],
                         criminal_record=data['criminal_record'])
 
         db.session.add(client)
@@ -190,33 +222,35 @@ def sale(apartment_id):
     data = request.get_json()
     apartment = Apartment.query.get_or_404(apartment_id)
     # this checks if the apartment is sold through the apartment.sold table in the database
-    if not apartment.sold:
-        # this search for and filters the name of the client and the agent from the database
-        agent = Agent.query.filter_by(first_name=data['sold_by']).first()
-        client = Client.query.filter_by(first_name=data['purchased_by']).first()
-        # this runs if the names in the agent and client are met (if the inputted names are in the database)
-        if agent and client:
-            apartment.sold_by = data['sold_by']
-            apartment.purchased_by = data['purchased_by']
-            apartment.sold = True
-            agent.buildings_sold = agent.buildings_sold + 1
-            agent.amount_earned = agent.amount_earned + data['amount_earned']
-            db.session.commit()
-            # returns all the conditions are met and the apartment is sold
-            return jsonify({'message': 'sold'})
-        # returns if the inputted name is not in the database
-        return jsonify({'message': 'available'})
-    # this runs if the apartment is already sold
-    return jsonify({'message': 'already sold'})
+    try:
+        if not apartment.sold:
+            # this search for and filters the name of the client and the agent from the database
+            agent = Agent.query.filter_by(first_name=data['sold_by']).first()
+            client = Client.query.filter_by(first_name=data['purchased_by']).first()
+            # this runs if the names in the agent and client are met (if the inputted names are in the database)
+            if agent and client:
+                apartment.sold_by = data['sold_by']
+                apartment.purchased_by = data['purchased_by']
+                apartment.sold = True
+                agent.buildings_sold = agent.buildings_sold + 1
+                agent.amount_earned = agent.amount_earned + data['amount_earned']
+                db.session.commit()
+                # returns all the conditions are met and the apartment is sold
+                return jsonify({'message': 'sold'})
+            # returns if the inputted name is not in the database
+            return jsonify({'message': ' invalid data, check agent or client'})
+        # this runs if the apartment is already sold
+        return jsonify({'message': 'already sold'})
+    except:
+        return 'problem with making sale, check data to confirm validity'
 
 
-@api.route('/sacked', methods=['POST'])
+@api.route('/sack/agent_name', methods=['POST'])
 @login_required
 @admin_required
-def sacked():
+def sack(agent_name):
     # sacking an agent
-    data = request.get_json()
-    agent = Agent.query.filter_by(first_name=data['first_name']).first()
+    agent = Agent.query.filter_by(first_name=agent_name).first()
     agent.sacked = True
     db.session.commit()
     return jsonify({'message': "agent sacked"})
