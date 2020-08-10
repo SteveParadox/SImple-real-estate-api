@@ -16,8 +16,10 @@ class Admin(db.Model, UserMixin):
     first_name = db.Column(db.String(), nullable=False)
     last_name = db.Column(db.String(), nullable=False)
     email = db.Column(db.String(), nullable=False)
+    country = db.Column(db.String(), nullable=False)
     password = db.Column(db.String(), nullable=False)
     logged_in = db.Column(db.Boolean, default=False)
+    auth_key= db.Column(db.String(),  unique=True)
 
 
 class Satisfaction(db.Model):
@@ -32,6 +34,7 @@ class Agent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(), nullable=False)
     last_name = db.Column(db.String(), nullable=False)
+    country = db.Column(db.String(), nullable=False)
     gender = db.Column(db.String(), nullable=False)
     dob = db.Column(db.String(), nullable=False)
     amount_earned = db.Column(db.Integer(), default=0)
@@ -60,6 +63,7 @@ class Client(db.Model):
     first_name = db.Column(db.String(), nullable=False)
     last_name = db.Column(db.String(), nullable=False)
     gender = db.Column(db.String(), nullable=False)
+    country = db.Column(db.String(), nullable=False)
     dob = db.Column(db.String(), nullable=False)
     phone_no = db.Column(db.Integer(), nullable=False)
     criminal_record = db.Column(db.Boolean, default=False)
