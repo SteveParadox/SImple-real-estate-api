@@ -29,19 +29,3 @@ Run manually:
 
 Built to use with a frontend framework for data collection and operation.
 
-## Links/routes
-
-* /reg/admin [post]: ``` registers the admin who has administrative priviledge over the database ```
-* /login/admin: ``` logging in as admin (for postman)```
-* /admin/login: ``` logging in as admin```
-* /logout/admin: ```logout as admin```
-* /admin: ```list of all admins```
-* /agent [post]: ```registering an agent ```
-* /agent: ```list of all agentss```
-* /apartment [post]: ```registering an apartment```
-* /apartment: ```list of all apartments```
-* /client [post]: ```register client```
-* /client: ```list of all clients```
-* /sold: ```list of apartments that has not been sold```
-* /sale/<int:apartment_id> [post]: ```selling the apartment through it's id ``` 
-* /sack/<string:agent_name> [post]: ``` sacking an agent through their name```
