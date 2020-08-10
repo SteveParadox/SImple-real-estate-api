@@ -16,3 +16,5 @@ Run manually:
 * python3 run.py 
 
 *You can then visit localhost:5000 to verify that it's running on your machine. Or, alternatively use postman*
+
+Built to use with a frontend framework for data collection and operation.
