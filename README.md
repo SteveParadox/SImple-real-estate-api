@@ -19,7 +19,8 @@ Run manually:
 
 Built to use with a frontend framework for data collection and operation.
 
-# To create a development database for the api:
+## Usage
+To create a development database for the api:
 ```
 * cd REPO
 * open terminal
