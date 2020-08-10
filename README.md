@@ -18,3 +18,11 @@ Run manually:
 *You can then visit localhost:5000 to verify that it's running on your machine. Or, alternatively use postman*
 
 Built to use with a frontend framework for data collection and operation.
+
+To create a development database for the api
+
+* cd REPO
+* open terminal
+* run python3 to enter console
+* from base import db, create_app
+* db.create_all(app=create_app)
